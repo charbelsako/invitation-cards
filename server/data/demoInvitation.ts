@@ -1,8 +1,6 @@
 import { InvitationInput } from '../schemas/invitation';
 
-export const demoInvitation = {
-  slug: 'demo-wedding',
-  template: 'horizontal',
+const baseDemo = {
   coupleNames: 'Mira & Elias',
   dateLabel: 'Saturday, 24 August 2026',
   ceremonyTime: '6:15 PM',
@@ -20,4 +18,24 @@ export const demoInvitation = {
   musicUrl: '',
   notifyEmail: '',
   maxGuestsPerInvite: 2
-} satisfies InvitationInput;
+} satisfies Omit<InvitationInput, 'slug' | 'template'>;
+
+export const demoInvitations = [
+  {
+    ...baseDemo,
+    slug: 'demo-horizontal',
+    template: 'horizontal'
+  },
+  {
+    ...baseDemo,
+    slug: 'demo-vertical',
+    template: 'vertical'
+  },
+  {
+    ...baseDemo,
+    slug: 'demo-envelope',
+    template: 'envelope'
+  }
+] satisfies InvitationInput[];
+
+export const demoInvitation = demoInvitations[0];

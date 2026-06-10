@@ -558,6 +558,21 @@ footer {
     var(--paper);
 }
 
+.invite-loading,
+.invite-error {
+  display: grid;
+  place-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  text-align: center;
+}
+
+.invite-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
 .invite-floating-actions {
   position: fixed;
   top: 1rem;

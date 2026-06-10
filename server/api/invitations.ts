@@ -12,14 +12,19 @@ export const invitationsRouter = Router();
 invitationsRouter.get('/invitations/:slug', async (request, response, next) => {
   try {
     if (!isDatabaseConnected()) {
-      response.json(demoInvitation);
+      response.status(503).json({ message: 'MongoDB is not connected. Add MONGODB_URI to load invitations.' });
       return;
     }
 
     const slug = String(request.params.slug);
     const invitation = await Invitation.findOne({ slug }).lean();
 
-    response.json(invitation || demoInvitation);
+    if (!invitation) {
+      response.status(404).json({ message: 'Invitation not found.' });
+      return;
+    }
+
+    response.json(invitation);
   } catch (error) {
     next(error);
   }

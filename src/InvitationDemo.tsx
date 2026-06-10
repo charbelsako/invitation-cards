@@ -1,6 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
-import { fallbackInvitation } from './demoInvitation';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Envelope } from './invitations/Envelope';
 import { HorizontalInvitation } from './invitations/HorizontalInvitation';
 import { InvitationTemplateProps, RsvpState } from './invitations/shared';
@@ -9,6 +8,8 @@ import { Invitation } from './types';
 
 const templateOptions: Invitation['template'][] = ['horizontal', 'vertical', 'envelope'];
 
+type LoadState = 'loading' | 'ready' | 'error';
+
 function isTemplate(value?: string): value is Invitation['template'] {
   return templateOptions.includes(value as Invitation['template']);
 }
@@ -16,37 +17,53 @@ function isTemplate(value?: string): value is Invitation['template'] {
 export function InvitationDemo() {
   const { slug, template: templateParam } = useParams<{ slug?: string; template?: string }>();
   const [searchParams] = useSearchParams();
-  const [invitation, setInvitation] = useState<Invitation>(fallbackInvitation);
+  const [invitation, setInvitation] = useState<Invitation | null>(null);
+  const [loadState, setLoadState] = useState<LoadState>('loading');
   const [rsvpState, setRsvpState] = useState<RsvpState>('idle');
   const [message, setMessage] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const invitationSlug = slug || searchParams.get('id') || fallbackInvitation.slug;
   const demoTemplate = isTemplate(templateParam) ? templateParam : undefined;
+  const invitationSlug = demoTemplate ? `demo-${demoTemplate}` : slug || searchParams.get('id') || '';
 
   useEffect(() => {
-    if (demoTemplate) {
-      setInvitation({
-        ...fallbackInvitation,
-        slug: `demo-${demoTemplate}`,
-        template: demoTemplate
-      });
+    if (!invitationSlug) {
+      setInvitation(null);
+      setLoadState('error');
       return;
     }
 
+    setLoadState('loading');
+
     fetch(`/api/invitations/${invitationSlug}`)
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((data: Invitation) => setInvitation({ ...fallbackInvitation, ...data }))
-      .catch(() => setInvitation({ ...fallbackInvitation, slug: invitationSlug }));
-  }, [demoTemplate, invitationSlug]);
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error('Invitation not found');
+        }
+
+        return response.json() as Promise<Invitation>;
+      })
+      .then((data) => {
+        setInvitation(data);
+        setLoadState('ready');
+      })
+      .catch(() => {
+        setInvitation(null);
+        setLoadState('error');
+      });
+  }, [invitationSlug]);
 
   const guestOptions = useMemo(
-    () => Array.from({ length: invitation.maxGuestsPerInvite }, (_, index) => index + 1),
-    [invitation.maxGuestsPerInvite]
+    () => (invitation ? Array.from({ length: invitation.maxGuestsPerInvite }, (_, index) => index + 1) : []),
+    [invitation]
   );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    if (!invitation) {
+      return;
+    }
+
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
@@ -80,7 +97,7 @@ export function InvitationDemo() {
   }
 
   async function toggleMusic() {
-    if (!invitation.musicUrl) {
+    if (!invitation?.musicUrl) {
       return;
     }
 
@@ -97,6 +114,25 @@ export function InvitationDemo() {
 
     await audioRef.current.play();
     setIsPlaying(true);
+  }
+
+  if (loadState === 'loading') {
+    return (
+      <main className="invite-page invite-loading">
+        <p className="invite-status">Loading invitation...</p>
+      </main>
+    );
+  }
+
+  if (loadState === 'error' || !invitation) {
+    return (
+      <main className="invite-page invite-error">
+        <p className="invite-status">Invitation not found.</p>
+        <Link to="/" className="button button--primary">
+          Back to home
+        </Link>
+      </main>
+    );
   }
 
   const templateProps: InvitationTemplateProps = {
