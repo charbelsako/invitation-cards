@@ -4,8 +4,8 @@
   "description": "A premium animated wedding invitation platform with RSVP collection.",
   "main": "server/index.ts",
   "scripts": {
-    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
-    "dev:web": "vite",
+    "dev": "concurrently -n api,web \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:web": "wait-on http://localhost:4000/api/health && vite",
     "dev:api": "tsx watch server/index.ts",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
@@ -42,6 +42,7 @@
     "concurrently": "^10.0.3",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "wait-on": "^9.0.10"
   }
 }

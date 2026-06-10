@@ -1,9 +1,6 @@
-import dotenv from 'dotenv';
 import { createApp } from './app';
 import { config } from './utils/config';
 import { connectToDatabase } from './utils/database';
-
-dotenv.config();
 
 const app = createApp();
 
