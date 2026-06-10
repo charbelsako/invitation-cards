@@ -30,7 +30,6 @@ export function InvitationDemo() {
 
   useEffect(() => {
     if (!invitationSlug) {
-      console.log('what');
       setInvitation(null);
       setLoadState('error');
       return;

@@ -34,10 +34,10 @@ export const timeline = [
 export function InviteMusicButton({ invitation, isPlaying, onToggleMusic }: InvitationTemplateProps) {
   return (
     <div className="invite-floating-actions">
-      <Link to="/" className="icon-button">
+      {/* <Link to="/" className="icon-button">
         <Home size={18} />
         Home
-      </Link>
+      </Link> */}
       <button className="icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
         <Music2 size={18} />
         {invitation.musicUrl ? (isPlaying ? 'Pause' : 'Music') : 'No music'}
