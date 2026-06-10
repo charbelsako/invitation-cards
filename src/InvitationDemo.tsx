@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { fallbackInvitation } from './demoInvitation';
 import { Envelope } from './invitations/Envelope';
 import { HorizontalInvitation } from './invitations/HorizontalInvitation';
@@ -6,21 +7,39 @@ import { InvitationTemplateProps, RsvpState } from './invitations/shared';
 import { VerticalInvitation } from './invitations/VerticalInvitation';
 import { Invitation } from './types';
 
+const templateOptions: Invitation['template'][] = ['horizontal', 'vertical', 'envelope'];
+
+function isTemplate(value?: string): value is Invitation['template'] {
+  return templateOptions.includes(value as Invitation['template']);
+}
+
 export function InvitationDemo() {
+  const { slug, template: templateParam } = useParams<{ slug?: string; template?: string }>();
+  const [searchParams] = useSearchParams();
   const [invitation, setInvitation] = useState<Invitation>(fallbackInvitation);
   const [rsvpState, setRsvpState] = useState<RsvpState>('idle');
   const [message, setMessage] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useEffect(() => {
-    const slug = getInvitationSlug();
+  const invitationSlug = slug || searchParams.get('id') || fallbackInvitation.slug;
+  const demoTemplate = isTemplate(templateParam) ? templateParam : undefined;
 
-    fetch(`/api/invitations/${slug}`)
+  useEffect(() => {
+    if (demoTemplate) {
+      setInvitation({
+        ...fallbackInvitation,
+        slug: `demo-${demoTemplate}`,
+        template: demoTemplate
+      });
+      return;
+    }
+
+    fetch(`/api/invitations/${invitationSlug}`)
       .then((response) => (response.ok ? response.json() : Promise.reject()))
       .then((data: Invitation) => setInvitation({ ...fallbackInvitation, ...data }))
-      .catch(() => setInvitation(fallbackInvitation));
-  }, []);
+      .catch(() => setInvitation({ ...fallbackInvitation, slug: invitationSlug }));
+  }, [demoTemplate, invitationSlug]);
 
   const guestOptions = useMemo(
     () => Array.from({ length: invitation.maxGuestsPerInvite }, (_, index) => index + 1),
@@ -105,11 +124,4 @@ export function InvitationDemo() {
       {invitation.template === 'horizontal' && <HorizontalInvitation {...templateProps} />}
     </main>
   );
-}
-
-function getInvitationSlug() {
-  const searchSlug = new URLSearchParams(window.location.search).get('id');
-  const segments = window.location.pathname.split('/').filter(Boolean);
-  const pathSlug = segments[0] === 'invite' ? segments[1] : segments[0];
-  return searchSlug || pathSlug || fallbackInvitation.slug;
 }

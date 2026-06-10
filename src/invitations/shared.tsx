@@ -9,6 +9,7 @@ import {
   Music2,
   Users
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Invitation } from '../types';
 
 export type RsvpState = 'idle' | 'submitting' | 'success' | 'error';
@@ -33,10 +34,10 @@ export const timeline = [
 export function InviteMusicButton({ invitation, isPlaying, onToggleMusic }: InvitationTemplateProps) {
   return (
     <div className="invite-floating-actions">
-      <a href="/" className="icon-button">
+      <Link to="/" className="icon-button">
         <Home size={18} />
         Home
-      </a>
+      </Link>
       <button className="icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
         <Music2 size={18} />
         {invitation.musicUrl ? (isPlaying ? 'Pause' : 'Music') : 'No music'}

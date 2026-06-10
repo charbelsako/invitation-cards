@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   Eye,
   Heart,
@@ -183,10 +184,10 @@ export function AdminApp() {
           <h1>Create an invitation without touching the database.</h1>
         </div>
         <div className="admin-header__actions">
-          <a className="button button--ghost admin-preview-link" href={`/invite/${form.slug}`} target="_blank" rel="noreferrer">
+          <Link className="text-black button button--ghost admin-preview-link" to={`/invite/${form.slug}`} target="_blank" rel="noreferrer">
             <Eye size={18} />
             Open guest link
-          </a>
+          </Link>
           <button className="icon-button" type="button" onClick={handleLogout}>
             Log out
           </button>

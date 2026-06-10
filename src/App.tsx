@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
+  ArrowRight,
   ChevronDown,
   Heart,
   LayoutTemplate,
@@ -7,9 +8,11 @@ import {
   Sparkles,
   Users
 } from 'lucide-react';
+import { Link, Route, Routes } from 'react-router-dom';
 import { AdminApp } from './AdminApp';
 import { fallbackInvitation } from './demoInvitation';
 import { InvitationDemo } from './InvitationDemo';
+import { Invitation } from './types';
 
 const signatureIdeas = [
   'Horizontal story panels for mobile-first reveals',
@@ -19,16 +22,38 @@ const signatureIdeas = [
   'Template-ready colors, SVG ornaments, and layouts'
 ];
 
+const demoTemplates: Array<{
+  id: Invitation['template'];
+  name: string;
+  description: string;
+}> = [
+  {
+    id: 'horizontal',
+    name: 'Horizontal Invitation',
+    description: 'Full-screen hero card with horizontal story flow and timeline sections.'
+  },
+  {
+    id: 'vertical',
+    name: 'Vertical Invitation',
+    description: 'Split editorial layout with bold typography and vertical rhythm.'
+  },
+  {
+    id: 'envelope',
+    name: 'Envelope',
+    description: 'Soft romantic reveal with a floating card over a full photo backdrop.'
+  }
+];
+
 function App() {
-  if (window.location.pathname.startsWith('/admin')) {
-    return <AdminApp />;
-  }
-
-  if (isInvitationRoute()) {
-    return <InvitationDemo />;
-  }
-
-  return <HomePage />;
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/admin" element={<AdminApp />} />
+      <Route path="/demo/:template" element={<InvitationDemo />} />
+      <Route path="/invite/:slug" element={<InvitationDemo />} />
+      <Route path="/invite" element={<InvitationDemo />} />
+    </Routes>
+  );
 }
 
 function HomePage() {
@@ -110,10 +135,33 @@ function HomePage() {
         </motion.div>
       </section>
 
-      <section>
-        <p>Horizontal Demo</p>
-        <p>Vertical Demo</p>
-        <p>Envelope Demo</p>
+      <section className="section demo-section" id="demos">
+        <div className="section-heading">
+          <span className="section-kicker">Live demos</span>
+          <h2>Preview each invitation layout.</h2>
+          <p>Open a template demo to test the guest experience before building your own in the admin studio.</p>
+        </div>
+        <div className="demo-grid">
+          {demoTemplates.map((template, index) => (
+            <motion.div
+              key={template.id}
+              initial={{ opacity: 0, y: 32 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ delay: index * 0.08, duration: 0.6 }}
+            >
+              <Link to={`/demo/${template.id}`} className="demo-card">
+                <span>0{index + 1}</span>
+                <strong>{template.name}</strong>
+                <p>{template.description}</p>
+                <span className="demo-card__cta">
+                  Open demo
+                  <ArrowRight size={16} />
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       <section className="story section">
@@ -145,21 +193,6 @@ function HomePage() {
       </footer>
     </main>
   );
-}
-
-function isInvitationRoute() {
-  const searchSlug = new URLSearchParams(window.location.search).get('id');
-  const segments = window.location.pathname.split('/').filter(Boolean);
-
-  if (searchSlug) {
-    return true;
-  }
-
-  if (segments[0] === 'invite' && segments[1]) {
-    return true;
-  }
-
-  return segments.length === 1 && !['admin'].includes(segments[0]);
 }
 
 export default App;

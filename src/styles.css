@@ -278,6 +278,79 @@ footer svg {
   margin-bottom: 2rem;
 }
 
+.section-heading p {
+  margin-top: 1rem;
+  font-size: 1.05rem;
+}
+
+.demo-section {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: clamp(4rem, 8vw, 7rem) 0;
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.demo-card {
+  display: grid;
+  gap: 0.75rem;
+  min-height: 280px;
+  border: 1px solid rgba(126, 78, 48, 0.14);
+  border-radius: 32px;
+  padding: 2rem;
+  color: inherit;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.94),
+    rgba(240, 226, 211, 0.62)
+  );
+  box-shadow: var(--shadow);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.demo-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(185, 130, 91, 0.42);
+  box-shadow: 0 28px 90px rgba(60, 35, 20, 0.18);
+}
+
+.demo-card > span:first-child {
+  color: var(--gold);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+}
+
+.demo-card strong {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.demo-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.demo-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: auto;
+  color: var(--gold-dark);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .flex {
   display: flex;
 }
@@ -1131,7 +1204,8 @@ footer {
   }
 
   .template-grid,
-  .form-grid {
+  .form-grid,
+  .demo-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -1150,4 +1224,8 @@ footer {
   .hero__actions {
     width: 100%;
   }
+}
+
+.text-black {
+  color: black;
 }
