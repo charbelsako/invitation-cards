@@ -20,13 +20,6 @@ import { Invitation } from './types';
 
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
 
-const timeline = [
-  { time: '5:30 PM', title: 'Golden hour welcome', detail: 'Champagne, portraits, and a soft string trio.' },
-  { time: '6:15 PM', title: 'Garden ceremony', detail: 'An intimate vow exchange under olive branches.' },
-  { time: '8:00 PM', title: 'Dinner under lights', detail: 'A seasonal menu, speeches, and candlelit tables.' },
-  { time: '10:30 PM', title: 'After party', detail: 'Live DJ, late-night bites, and dancing until midnight.' }
-];
-
 const signatureIdeas = [
   'Horizontal story panels for mobile-first reveals',
   'Private RSVP capacity and plus-one control',
@@ -149,7 +142,7 @@ function HomePage() {
           <span className="section-kicker">What you can add</span>
           <h2>A studio for invitations, not a hand-coded page.</h2>
         </div>
-        <div className="horizontal-rail" aria-label="Invitation feature highlights">
+        <div className="flex-container flex flex-row flex-wrap" aria-label="Invitation feature highlights">
           {signatureIdeas.map((idea, index) => (
             <motion.article
               className="feature-card"
