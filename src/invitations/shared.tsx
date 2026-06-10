@@ -15,6 +15,7 @@ import { Invitation } from '../types';
 export type RsvpState = 'idle' | 'submitting' | 'success' | 'error';
 
 export type InvitationTemplateProps = {
+  autoplayBlocked?: boolean;
   guestOptions: number[];
   invitation: Invitation;
   isPlaying: boolean;
@@ -31,7 +32,20 @@ export const timeline = [
   { time: '10:30 PM', title: 'After party', detail: 'Live DJ, late-night bites, and dancing until midnight.' }
 ];
 
-export function InviteMusicButton({ invitation, isPlaying, onToggleMusic }: InvitationTemplateProps) {
+export function InviteMusicButton({
+  autoplayBlocked,
+  invitation,
+  isPlaying,
+  onToggleMusic
+}: InvitationTemplateProps) {
+  const musicLabel = !invitation.musicUrl
+    ? 'No music'
+    : isPlaying
+      ? 'Pause'
+      : autoplayBlocked
+        ? 'Tap to play'
+        : 'Music';
+
   return (
     <div className="invite-floating-actions">
       {/* <Link to="/" className="icon-button">
@@ -40,7 +54,7 @@ export function InviteMusicButton({ invitation, isPlaying, onToggleMusic }: Invi
       </Link> */}
       <button className="icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
         <Music2 size={18} />
-        {invitation.musicUrl ? (isPlaying ? 'Pause' : 'Music') : 'No music'}
+        {musicLabel}
       </button>
     </div>
   );

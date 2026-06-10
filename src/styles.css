@@ -1065,6 +1065,30 @@ footer {
   grid-column: 1 / -1;
 }
 
+.media-field__controls {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.media-field__file {
+  padding: 0.65rem;
+}
+
+.media-field__preview {
+  min-height: 140px;
+  margin-top: 0.75rem;
+  border: 1px solid rgba(126, 78, 48, 0.14);
+  border-radius: 18px;
+  background-position: center;
+  background-size: cover;
+}
+
+.media-field__status {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--muted);
+}
+
 .builder-panel input[type='color'] {
   height: 3.4rem;
   padding: 0.4rem;

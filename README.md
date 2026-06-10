@@ -7,6 +7,7 @@ A premium wedding invitation website with a React frontend, animated sections, R
 - Animated React/Vite invitation page with a cinematic hero, horizontal feature rail, timeline, music control, and RSVP form.
 - Private `/admin` studio for creating invitations without editing the database by hand.
 - Template, color, image, music, copy, guest limit, and RSVP notification controls.
+- Admin file uploads for hero image, RSVP image, and background music. Uploaded files are stored on disk and saved as `/uploads/...` paths in the existing invitation fields.
 - Express API with MongoDB models for users, invitations, and guest RSVPs.
 - Seeded admin user from environment variables.
 - RSVP validation with guest-capacity checks.
@@ -20,7 +21,7 @@ npm install
 npm run dev
 ```
 
-The frontend runs on `http://localhost:5173` and proxies `/api` requests to the API on `http://localhost:4000`. All frontend API calls go through `src/api/client.ts` using `VITE_API_URL`. Leave it empty in local dev to use the Vite proxy, or set it to `http://localhost:4000` to call the API directly.
+The frontend runs on `http://localhost:5173` and proxies `/api` and `/uploads` requests to the API on `http://localhost:4000`. All frontend API calls go through `src/api/client.ts` using `VITE_API_URL`. Leave it empty in local dev to use the Vite proxy, or set it to `http://localhost:4000` to call the API directly.
 
 Open the admin builder at `http://localhost:5173/admin`. After creating an invitation, guests can open it at `http://localhost:5173/invite/<slug>` or `http://localhost:5173/?id=<slug>`.
 

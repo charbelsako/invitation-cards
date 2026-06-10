@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { apiFetch } from './api/client';
+import { apiFetch, resolveInvitationMedia } from './api/client';
 import { Envelope } from './invitations/Envelope';
 import { HorizontalInvitation } from './invitations/HorizontalInvitation';
 import { InvitationTemplateProps, RsvpState } from './invitations/shared';
@@ -23,6 +23,7 @@ export function InvitationDemo() {
   const [rsvpState, setRsvpState] = useState<RsvpState>('idle');
   const [message, setMessage] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const demoTemplate = isTemplate(templateParam) ? templateParam : undefined;
@@ -46,7 +47,7 @@ export function InvitationDemo() {
         return response.json() as Promise<Invitation>;
       })
       .then((data) => {
-        setInvitation(data);
+        setInvitation(resolveInvitationMedia(data));
         setLoadState('ready');
       })
       .catch(() => {
@@ -54,6 +55,67 @@ export function InvitationDemo() {
         setLoadState('error');
       });
   }, [invitationSlug]);
+
+  useEffect(() => {
+    if (loadState !== 'ready' || !invitation?.musicUrl) {
+      return;
+    }
+
+    const audio = new Audio(invitation.musicUrl);
+    audio.loop = true;
+    audio.preload = 'auto';
+    audioRef.current = audio;
+
+    audio
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+        setAutoplayBlocked(false);
+      })
+      .catch(() => {
+        setIsPlaying(false);
+        setAutoplayBlocked(true);
+      });
+
+    return () => {
+      audio.pause();
+      audio.src = '';
+      audioRef.current = null;
+      setIsPlaying(false);
+      setAutoplayBlocked(false);
+    };
+  }, [invitation?.musicUrl, loadState]);
+
+  useEffect(() => {
+    const musicUrl = invitation?.musicUrl;
+
+    if (!autoplayBlocked || !musicUrl) {
+      return;
+    }
+
+    async function startMusicOnInteraction() {
+      if (!audioRef.current) {
+        const audio = new Audio(musicUrl);
+        audio.loop = true;
+        audio.preload = 'auto';
+        audioRef.current = audio;
+      }
+
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+        setAutoplayBlocked(false);
+      } catch {
+        setAutoplayBlocked(true);
+      }
+    }
+
+    window.addEventListener('pointerdown', startMusicOnInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', startMusicOnInteraction);
+    };
+  }, [autoplayBlocked, invitation?.musicUrl]);
 
   const guestOptions = useMemo(
     () => (invitation ? Array.from({ length: invitation.maxGuestsPerInvite }, (_, index) => index + 1) : []),
@@ -103,8 +165,10 @@ export function InvitationDemo() {
     }
 
     if (!audioRef.current) {
-      audioRef.current = new Audio(invitation.musicUrl);
-      audioRef.current.loop = true;
+      const audio = new Audio(invitation.musicUrl);
+      audio.loop = true;
+      audio.preload = 'auto';
+      audioRef.current = audio;
     }
 
     if (isPlaying) {
@@ -113,8 +177,13 @@ export function InvitationDemo() {
       return;
     }
 
-    await audioRef.current.play();
-    setIsPlaying(true);
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+      setAutoplayBlocked(false);
+    } catch {
+      setAutoplayBlocked(true);
+    }
   }
 
   if (loadState === 'loading') {
@@ -137,6 +206,7 @@ export function InvitationDemo() {
   }
 
   const templateProps: InvitationTemplateProps = {
+    autoplayBlocked,
     guestOptions,
     invitation,
     isPlaying,

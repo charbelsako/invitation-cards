@@ -13,11 +13,13 @@ import {
   Save,
   Sparkles
 } from 'lucide-react';
-import { apiFetch } from './api/client';
+import { apiFetch, mediaUrl } from './api/client';
 import { fallbackInvitation } from './demoInvitation';
 import { Invitation } from './types';
 
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
+type MediaFieldName = 'heroImage' | 'rsvpImage' | 'musicUrl';
+type UploadState = Partial<Record<MediaFieldName, boolean>>;
 
 const templates = [
   {
@@ -44,6 +46,8 @@ export function AdminApp() {
   const [loginMessage, setLoginMessage] = useState('');
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveMessage, setSaveMessage] = useState('');
+  const [uploadState, setUploadState] = useState<UploadState>({});
+  const [uploadMessage, setUploadMessage] = useState('');
 
   useEffect(() => {
     if (!token) {
@@ -96,6 +100,37 @@ export function AdminApp() {
       ...current,
       [name]: name === 'maxGuestsPerInvite' ? Number(value) : value
     }));
+  }
+
+  async function handleFileUpload(field: MediaFieldName, file: File) {
+    setUploadMessage('');
+    setUploadState((current) => ({ ...current, [field]: true }));
+
+    try {
+      const body = new FormData();
+      body.append('file', file);
+
+      const kind = field === 'musicUrl' ? 'audio' : 'image';
+      const response = await apiFetch(`/api/admin/uploads?kind=${kind}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.message || 'Upload failed.');
+      }
+
+      setForm((current) => ({
+        ...current,
+        [field]: payload.url
+      }));
+    } catch (error) {
+      setUploadMessage(error instanceof Error ? error.message : 'Upload failed.');
+    } finally {
+      setUploadState((current) => ({ ...current, [field]: false }));
+    }
   }
 
   async function handleSave(event: FormEvent<HTMLFormElement>) {
@@ -270,19 +305,39 @@ export function AdminApp() {
               Secondary color
               <input name="secondaryColor" type="color" value={form.secondaryColor} onChange={handleFieldChange} />
             </label>
-            <label className="form-grid__wide">
-              Hero image URL
-              <input name="heroImage" value={form.heroImage} onChange={handleFieldChange} required />
-            </label>
-            <label className="form-grid__wide">
-              RSVP image URL
-              <input name="rsvpImage" value={form.rsvpImage} onChange={handleFieldChange} />
-            </label>
-            <label className="form-grid__wide">
-              Music URL
-              <input name="musicUrl" value={form.musicUrl || ''} onChange={handleFieldChange} placeholder="Optional mp3 URL" />
-            </label>
+            <MediaField
+              accept="image/*"
+              field="heroImage"
+              kind="image"
+              label="Hero image"
+              onFieldChange={handleFieldChange}
+              onUpload={handleFileUpload}
+              required
+              uploading={Boolean(uploadState.heroImage)}
+              value={form.heroImage}
+            />
+            <MediaField
+              accept="image/*"
+              field="rsvpImage"
+              kind="image"
+              label="RSVP image"
+              onFieldChange={handleFieldChange}
+              onUpload={handleFileUpload}
+              uploading={Boolean(uploadState.rsvpImage)}
+              value={form.rsvpImage}
+            />
+            <MediaField
+              accept="audio/*"
+              field="musicUrl"
+              kind="audio"
+              label="Background music"
+              onFieldChange={handleFieldChange}
+              onUpload={handleFileUpload}
+              uploading={Boolean(uploadState.musicUrl)}
+              value={form.musicUrl || ''}
+            />
           </div>
+          {uploadMessage && <p className="form-message form-message--error">{uploadMessage}</p>}
 
           <SectionLabel icon={<Image size={18} />} title="Story Copy" />
           <label>
@@ -323,7 +378,7 @@ export function AdminApp() {
         <aside className={`builder-preview theme-${form.template}`}>
           <span className="section-kicker">Live preview</span>
           <div className="preview-phone">
-            <div className="preview-hero" style={{ backgroundImage: `url(${form.heroImage})` }}>
+            <div className="preview-hero" style={{ backgroundImage: `url(${mediaUrl(form.heroImage)})` }}>
               <span>{form.dateLabel}</span>
               <h2>{form.coupleNames}</h2>
             </div>
@@ -347,6 +402,61 @@ function SectionLabel({ icon, title }: { icon: ReactNode; title: string }) {
       {icon}
       <span>{title}</span>
     </div>
+  );
+}
+
+function MediaField({
+  accept,
+  field,
+  kind,
+  label,
+  onFieldChange,
+  onUpload,
+  required = false,
+  uploading,
+  value
+}: {
+  accept: string;
+  field: MediaFieldName;
+  kind: 'audio' | 'image';
+  label: string;
+  onFieldChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+  onUpload: (field: MediaFieldName, file: File) => Promise<void>;
+  required?: boolean;
+  uploading: boolean;
+  value: string;
+}) {
+  return (
+    <label className="form-grid__wide media-field">
+      {label}
+      <div className="media-field__controls">
+        <input
+          accept={accept}
+          className="media-field__file"
+          disabled={uploading}
+          type="file"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            if (file) {
+              void onUpload(field, file);
+            }
+            event.target.value = '';
+          }}
+        />
+        <input
+          name={field}
+          placeholder={kind === 'audio' ? 'Upload a file or paste an mp3 URL' : 'Upload a file or paste an image URL'}
+          required={required}
+          value={value}
+          onChange={onFieldChange}
+        />
+      </div>
+      {uploading && <small className="media-field__status">Uploading...</small>}
+      {kind === 'image' && value && (
+        <div className="media-field__preview" style={{ backgroundImage: `url(${mediaUrl(value)})` }} />
+      )}
+      {kind === 'audio' && value && <small className="media-field__status">{value}</small>}
+    </label>
   );
 }
 

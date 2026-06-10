@@ -6,11 +6,13 @@ import { healthRouter } from './api/health';
 import { invitationsRouter } from './api/invitations';
 import { errorHandler } from './middleware/errorHandler';
 import { config } from './utils/config';
+import { uploadsDir } from './utils/uploads';
 
 export function createApp() {
   const app = express();
 
   app.use(cors({ origin: config.clientOrigin }));
+  app.use('/uploads', express.static(uploadsDir));
   app.use(express.json());
 
   app.use('/api', healthRouter);

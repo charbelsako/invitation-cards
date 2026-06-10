@@ -4,6 +4,7 @@ import { requireDatabase } from '../middleware/requireDatabase';
 import { Invitation } from '../models/invitation';
 import { Rsvp } from '../models/rsvp';
 import { invitationInput } from '../schemas/invitation';
+import { uploadAudio, uploadImage } from '../utils/uploads';
 
 export const adminRouter = Router();
 
@@ -56,6 +57,24 @@ adminRouter.put('/admin/invitations/:slug', async (request, response, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+adminRouter.post('/admin/uploads', (request, response, next) => {
+  const uploader = request.query.kind === 'audio' ? uploadAudio.single('file') : uploadImage.single('file');
+
+  uploader(request, response, (error) => {
+    if (error) {
+      next(error);
+      return;
+    }
+
+    if (!request.file) {
+      response.status(400).json({ message: 'No file uploaded.' });
+      return;
+    }
+
+    response.status(201).json({ url: `/uploads/${request.file.filename}` });
+  });
 });
 
 adminRouter.get('/admin/invitations/:slug/rsvps', async (request, response, next) => {

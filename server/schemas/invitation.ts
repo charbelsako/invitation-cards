@@ -1,8 +1,26 @@
 import { z } from 'zod';
 import { templateOptions } from '../constants/templates';
 
-const optionalUrl = z.string().trim().optional().default('');
 const colorValue = z.string().trim().regex(/^#[0-9a-fA-F]{6}$/, 'Use a valid hex color.');
+
+function isStoredMediaUrl(value: string) {
+  return (
+    value.startsWith('http://') ||
+    value.startsWith('https://') ||
+    value.startsWith('/uploads/')
+  );
+}
+
+const requiredMediaUrl = z
+  .string()
+  .trim()
+  .min(1, 'This file or URL is required.')
+  .refine(isStoredMediaUrl, 'Use a valid URL or upload a file from the admin studio.');
+
+const optionalMediaUrl = z.union([
+  z.literal(''),
+  z.string().trim().refine(isStoredMediaUrl, 'Use a valid URL or upload a file from the admin studio.')
+]);
 
 export const invitationInput = z.object({
   slug: z
@@ -17,13 +35,13 @@ export const invitationInput = z.object({
   ceremonyTime: z.string().trim().min(1).default('6:15 PM'),
   venueName: z.string().trim().min(2),
   location: z.string().trim().min(2),
-  heroImage: z.string().trim().url('Hero image must be a valid URL.'),
-  rsvpImage: optionalUrl,
+  heroImage: requiredMediaUrl,
+  rsvpImage: optionalMediaUrl.default(''),
   accentColor: colorValue.default('#b9825b'),
   secondaryColor: colorValue.default('#7c4e34'),
   introTitle: z.string().trim().min(6),
   introText: z.string().trim().min(12),
-  musicUrl: optionalUrl,
+  musicUrl: optionalMediaUrl.default(''),
   notifyEmail: z.union([z.literal(''), z.string().trim().email()]).default(''),
   maxGuestsPerInvite: z.coerce.number().int().min(1).max(10).default(2)
 });
