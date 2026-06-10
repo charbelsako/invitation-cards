@@ -4,7 +4,7 @@ import { templateOptions } from '../constants/templates';
 const invitationSchema = new Schema(
   {
     slug: { type: String, required: true, unique: true, index: true },
-    template: { type: String, enum: templateOptions, default: 'classic' },
+    template: { type: String, enum: templateOptions, default: 'horizontal' },
     coupleNames: { type: String, required: true },
     dateLabel: { type: String, required: true },
     ceremonyTime: { type: String, default: '6:15 PM' },

@@ -1,6 +1,6 @@
 export type Invitation = {
   slug: string;
-  template: 'classic' | 'editorial' | 'garden';
+  template: 'vertical' | 'horizontal' | 'envelope';
   coupleNames: string;
   dateLabel: string;
   ceremonyTime: string;

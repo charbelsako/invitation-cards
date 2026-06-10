@@ -11,7 +11,7 @@ export const invitationInput = z.object({
     .toLowerCase()
     .min(3)
     .regex(/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and dashes.'),
-  template: z.enum(templateOptions).default('classic'),
+  template: z.enum(templateOptions).default('horizontal'),
   coupleNames: z.string().trim().min(2),
   dateLabel: z.string().trim().min(2),
   ceremonyTime: z.string().trim().min(1).default('6:15 PM'),

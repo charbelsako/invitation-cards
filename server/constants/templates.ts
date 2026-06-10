@@ -1,3 +1,3 @@
-export const templateOptions = ['classic', 'editorial', 'garden'] as const;
+export const templateOptions = ['horizontal', 'vertical', 'envelope'] as const;
 
 export type InvitationTemplate = (typeof templateOptions)[number];

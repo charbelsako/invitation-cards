@@ -2,7 +2,7 @@ import { InvitationInput } from '../schemas/invitation';
 
 export const demoInvitation = {
   slug: 'demo-wedding',
-  template: 'classic',
+  template: 'horizontal',
   coupleNames: 'Mira & Elias',
   dateLabel: 'Saturday, 24 August 2026',
   ceremonyTime: '6:15 PM',
