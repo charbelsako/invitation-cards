@@ -1,68 +1,24 @@
-import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useScroll, useTransform } from 'framer-motion';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import {
-  CalendarDays,
-  CheckCircle2,
   ChevronDown,
   Eye,
-  Gift,
   Heart,
   Image,
   LayoutTemplate,
   Lock,
   Mail,
-  MapPin,
-  Music2,
   Palette,
   Plus,
   Save,
   Sparkles,
   Users
 } from 'lucide-react';
+import { fallbackInvitation } from './demoInvitation';
+import { InvitationDemo } from './InvitationDemo';
+import { Invitation } from './types';
 
-type Invitation = {
-  slug: string;
-  template: 'classic' | 'editorial' | 'garden';
-  coupleNames: string;
-  dateLabel: string;
-  ceremonyTime: string;
-  venueName: string;
-  location: string;
-  heroImage: string;
-  rsvpImage: string;
-  accentColor: string;
-  secondaryColor: string;
-  introTitle: string;
-  introText: string;
-  musicUrl?: string;
-  notifyEmail: string;
-  maxGuestsPerInvite: number;
-};
-
-type RsvpState = 'idle' | 'submitting' | 'success' | 'error';
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
-
-const fallbackInvitation: Invitation = {
-  slug: 'demo-wedding',
-  template: 'classic',
-  coupleNames: 'Mira & Elias',
-  dateLabel: 'Saturday, 24 August 2026',
-  ceremonyTime: '6:15 PM',
-  venueName: 'Villa Sursock Gardens',
-  location: 'Beirut, Lebanon',
-  heroImage:
-    'https://images.unsplash.com/photo-1529634806980-85c3dd6d34ac?auto=format&fit=crop&w=1600&q=85',
-  rsvpImage:
-    'https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1200&q=85',
-  accentColor: '#b9825b',
-  secondaryColor: '#7c4e34',
-  introTitle: 'A cinematic invitation experience for a once-in-a-lifetime celebration.',
-  introText:
-    'This invitation combines premium visual design, subtle movement, RSVP collection, and a template-ready structure for future designs.',
-  musicUrl: '',
-  notifyEmail: '',
-  maxGuestsPerInvite: 2
-};
 
 const timeline = [
   { time: '5:30 PM', title: 'Golden hour welcome', detail: 'Champagne, portraits, and a soft string trio.' },
@@ -102,100 +58,24 @@ function App() {
     return <AdminApp />;
   }
 
-  return <PublicInvitation />;
+  if (isInvitationRoute()) {
+    return <InvitationDemo />;
+  }
+
+  return <HomePage />;
 }
 
-function PublicInvitation() {
-  const [invitation, setInvitation] = useState<Invitation>(fallbackInvitation);
-  const [rsvpState, setRsvpState] = useState<RsvpState>('idle');
-  const [message, setMessage] = useState('');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+function HomePage() {
   const { scrollYProgress } = useScroll();
-  const heroScale = useTransform(scrollYProgress, [0, 0.4], [1, 1.12]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0.35]);
-
-  useEffect(() => {
-    const slug = getInvitationSlug();
-
-    fetch(`/api/invitations/${slug}`)
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then((data: Invitation) => setInvitation({ ...fallbackInvitation, ...data }))
-      .catch(() => setInvitation(fallbackInvitation));
-  }, []);
-
-  const guestOptions = useMemo(
-    () => Array.from({ length: invitation.maxGuestsPerInvite }, (_, index) => index + 1),
-    [invitation.maxGuestsPerInvite]
-  );
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    setRsvpState('submitting');
-    setMessage('');
-
-    try {
-      const response = await fetch(`/api/invitations/${invitation.slug}/rsvps`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          guestName: formData.get('guestName'),
-          email: formData.get('email'),
-          attendingCount: Number(formData.get('attendingCount')),
-          note: formData.get('note')
-        })
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        throw new Error(payload?.message || 'Unable to submit RSVP');
-      }
-
-      setRsvpState('success');
-      setMessage('Your RSVP was received. We cannot wait to celebrate with you.');
-      event.currentTarget.reset();
-    } catch (error) {
-      setRsvpState('error');
-      setMessage(error instanceof Error ? error.message : 'Something went wrong. Please try again.');
-    }
-  }
-
-  async function toggleMusic() {
-    if (!invitation.musicUrl) {
-      return;
-    }
-
-    if (!audioRef.current) {
-      audioRef.current = new Audio(invitation.musicUrl);
-      audioRef.current.loop = true;
-    }
-
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      return;
-    }
-
-    await audioRef.current.play();
-    setIsPlaying(true);
-  }
+  const heroScale = useTransform(scrollYProgress, [0, 0.4], [1, 1.08]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.45], [1, 0.42]);
 
   return (
-    <main
-      style={
-        {
-          '--gold': invitation.accentColor,
-          '--gold-dark': invitation.secondaryColor
-        } as React.CSSProperties
-      }
-      className={`theme-${invitation.template}`}
-    >
+    <main>
       <section className="hero">
         <motion.div
           className="hero__image"
-          style={{ backgroundImage: `url(${invitation.heroImage})`, scale: heroScale, opacity: heroOpacity }}
+          style={{ backgroundImage: `url(${fallbackInvitation.heroImage})`, scale: heroScale, opacity: heroOpacity }}
         />
         <div className="hero__veil" />
         <motion.div
@@ -206,31 +86,31 @@ function PublicInvitation() {
         >
           <span className="eyebrow">
             <Sparkles size={16} />
-            {invitation.template} wedding invitation
+            Invitation Cards
           </span>
-          <h1>{invitation.coupleNames}</h1>
-          <p>{invitation.dateLabel}</p>
+          <h1>Wedding invitations that feel alive.</h1>
+          <p>Create premium animated invitations, collect RSVPs, and manage every detail from one private studio.</p>
           <div className="hero__actions">
-            <a href="#rsvp" className="button button--primary">
-              RSVP Now
+            <a href="/admin" className="button button--primary">
+              Open Admin Studio
             </a>
-            <a href="#details" className="button button--ghost">
-              View Details
+            <a href="/invite/demo-wedding" className="button button--ghost">
+              View Demo Invite
             </a>
           </div>
         </motion.div>
         <motion.a
           className="scroll-cue"
-          href="#details"
+          href="#features"
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.8 }}
-          aria-label="Scroll to invitation details"
+          aria-label="Scroll to features"
         >
           <ChevronDown />
         </motion.a>
       </section>
 
-      <section className="intro section" id="details">
+      <section className="intro section" id="features">
         <motion.div
           className="intro__card"
           initial={{ opacity: 0, y: 48 }}
@@ -238,24 +118,27 @@ function PublicInvitation() {
           viewport={{ once: true, amount: 0.35 }}
           transition={{ duration: 0.7 }}
         >
-          <span className="section-kicker">With great joy</span>
-          <h2>{invitation.introTitle}</h2>
-          <p>{invitation.introText}</p>
+          <span className="section-kicker">Platform</span>
+          <h2>Build once, launch many invitation designs.</h2>
+          <p>
+            The front page is the product website. Actual invitations live on their own guest links
+            and change layout based on the template selected in the admin studio.
+          </p>
           <div className="detail-grid">
             <div>
-              <CalendarDays />
-              <strong>{invitation.dateLabel}</strong>
-              <span>Ceremony starts at {invitation.ceremonyTime}</span>
+              <LayoutTemplate />
+              <strong>Template-based invites</strong>
+              <span>Classic, editorial, and garden layouts.</span>
             </div>
             <div>
-              <MapPin />
-              <strong>{invitation.venueName}</strong>
-              <span>{invitation.location}</span>
+              <Palette />
+              <strong>Custom styling</strong>
+              <span>Colors, imagery, copy, and music per invitation.</span>
             </div>
             <div>
               <Users />
-              <strong>Private RSVP</strong>
-              <span>Up to {invitation.maxGuestsPerInvite} guest(s) for this invite</span>
+              <strong>RSVP management</strong>
+              <span>Guest limits, notes, and email notifications.</span>
             </div>
           </div>
         </motion.div>
@@ -263,8 +146,8 @@ function PublicInvitation() {
 
       <section className="story section">
         <div className="section-heading">
-          <span className="section-kicker">The experience</span>
-          <h2>Designed to feel like opening a luxury paper invitation.</h2>
+          <span className="section-kicker">What you can add</span>
+          <h2>A studio for invitations, not a hand-coded page.</h2>
         </div>
         <div className="horizontal-rail" aria-label="Invitation feature highlights">
           {signatureIdeas.map((idea, index) => (
@@ -278,109 +161,10 @@ function PublicInvitation() {
             >
               <span>0{index + 1}</span>
               <h3>{idea}</h3>
-              <p>Built as a reusable product feature, not a one-off landing page section.</p>
+              <p>Designed as a reusable platform feature for future invitation templates.</p>
             </motion.article>
           ))}
         </div>
-      </section>
-
-      <section className="timeline section">
-        <div className="section-heading">
-          <span className="section-kicker">Wedding day</span>
-          <h2>The celebration plan</h2>
-        </div>
-        <div className="timeline__list">
-          {timeline.map((item) => (
-            <motion.div
-              className="timeline__item"
-              key={item.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ duration: 0.55 }}
-            >
-              <span>{item.time}</span>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.detail}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="rsvp section" id="rsvp">
-        <motion.div
-          className="rsvp__panel"
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.65 }}
-        >
-          <div className="rsvp__copy">
-            <div
-              className="rsvp__photo"
-              style={{ backgroundImage: `url(${invitation.rsvpImage || invitation.heroImage})` }}
-            />
-            <span className="section-kicker">Kindly respond</span>
-            <h2>Reserve your place at the table.</h2>
-            <p>
-              Guest responses are sent to the API and stored in MongoDB. The backend can also
-              notify the couple by email when SMTP variables are configured.
-            </p>
-            <div className="mini-actions">
-              <button className="icon-button" type="button" onClick={toggleMusic} disabled={!invitation.musicUrl}>
-                <Music2 />
-                {invitation.musicUrl ? (isPlaying ? 'Pause music' : 'Play music') : 'Music ready when added'}
-              </button>
-              <span>
-                <Gift />
-                Registry and travel sections can be added next.
-              </span>
-            </div>
-          </div>
-
-          <form className="rsvp__form" onSubmit={handleSubmit}>
-            <label>
-              Full name
-              <input name="guestName" required placeholder="Charbel Sarkis" />
-            </label>
-            <label>
-              Email
-              <input name="email" type="email" required placeholder="guest@example.com" />
-            </label>
-            <label>
-              Guests attending
-              <select name="attendingCount" required defaultValue="1">
-                {guestOptions.map((count) => (
-                  <option key={count} value={count}>
-                    {count}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Note to the couple
-              <textarea name="note" rows={4} placeholder="Dietary notes, song requests, or a sweet message" />
-            </label>
-            <button className="button button--primary" type="submit" disabled={rsvpState === 'submitting'}>
-              {rsvpState === 'submitting' ? 'Sending...' : 'Send RSVP'}
-            </button>
-            <AnimatePresence>
-              {message && (
-                <motion.p
-                  className={`form-message form-message--${rsvpState}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                >
-                  {rsvpState === 'success' ? <CheckCircle2 size={18} /> : <Mail size={18} />}
-                  {message}
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </form>
-        </motion.div>
       </section>
 
       <footer>
@@ -539,7 +323,7 @@ function AdminApp() {
           <h1>Create an invitation without touching the database.</h1>
         </div>
         <div className="admin-header__actions">
-          <a className="button button--ghost admin-preview-link" href={`/${form.slug}`} target="_blank" rel="noreferrer">
+          <a className="button button--ghost admin-preview-link" href={`/invite/${form.slug}`} target="_blank" rel="noreferrer">
             <Eye size={18} />
             Open guest link
           </a>
@@ -563,7 +347,7 @@ function AdminApp() {
               onClick={() => setForm(normalizeInvitation(invitation))}
             >
               <strong>{invitation.coupleNames}</strong>
-              <span>/{invitation.slug}</span>
+              <span>/invite/{invitation.slug}</span>
             </button>
           ))}
         </aside>
@@ -728,10 +512,19 @@ function normalizeInvitation(invitation: Partial<Invitation>): Invitation {
   };
 }
 
-function getInvitationSlug() {
+function isInvitationRoute() {
   const searchSlug = new URLSearchParams(window.location.search).get('id');
-  const pathSlug = window.location.pathname.split('/').filter(Boolean)[0];
-  return searchSlug || pathSlug || fallbackInvitation.slug;
+  const segments = window.location.pathname.split('/').filter(Boolean);
+
+  if (searchSlug) {
+    return true;
+  }
+
+  if (segments[0] === 'invite' && segments[1]) {
+    return true;
+  }
+
+  return segments.length === 1 && !['admin'].includes(segments[0]);
 }
 
 export default App;

@@ -22,7 +22,7 @@ npm run dev
 
 The frontend runs on `http://localhost:5173` and proxies `/api` requests to the API on `http://localhost:4000`.
 
-Open the admin builder at `http://localhost:5173/admin`. After creating an invitation, guests can open it at `http://localhost:5173/<slug>` or `http://localhost:5173/?id=<slug>`.
+Open the admin builder at `http://localhost:5173/admin`. After creating an invitation, guests can open it at `http://localhost:5173/invite/<slug>` or `http://localhost:5173/?id=<slug>`.
 
 ## Environment Variables
 
