@@ -13,6 +13,7 @@ import {
   Save,
   Sparkles
 } from 'lucide-react';
+import { apiFetch } from './api/client';
 import { fallbackInvitation } from './demoInvitation';
 import { Invitation } from './types';
 
@@ -67,7 +68,7 @@ export function AdminApp() {
     setLoginMessage('');
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -103,7 +104,7 @@ export function AdminApp() {
     setSaveMessage('');
 
     try {
-      const response = await fetch('/api/admin/invitations', {
+      const response = await apiFetch('/api/admin/invitations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -350,7 +351,7 @@ function SectionLabel({ icon, title }: { icon: ReactNode; title: string }) {
 }
 
 async function fetchAdminInvitations(token: string) {
-  const response = await fetch('/api/admin/invitations', {
+  const response = await apiFetch('/api/admin/invitations', {
     headers: { Authorization: `Bearer ${token}` }
   });
   const payload = await response.json();

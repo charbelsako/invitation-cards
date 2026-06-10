@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { apiFetch } from './api/client';
 import { Envelope } from './invitations/Envelope';
 import { HorizontalInvitation } from './invitations/HorizontalInvitation';
 import { InvitationTemplateProps, RsvpState } from './invitations/shared';
@@ -29,6 +30,7 @@ export function InvitationDemo() {
 
   useEffect(() => {
     if (!invitationSlug) {
+      console.log('what');
       setInvitation(null);
       setLoadState('error');
       return;
@@ -36,7 +38,7 @@ export function InvitationDemo() {
 
     setLoadState('loading');
 
-    fetch(`/api/invitations/${invitationSlug}`)
+    apiFetch(`/api/invitations/${invitationSlug}`)
       .then(async (response) => {
         if (!response.ok) {
           throw new Error('Invitation not found');
@@ -71,7 +73,7 @@ export function InvitationDemo() {
     setMessage('');
 
     try {
-      const response = await fetch(`/api/invitations/${invitation.slug}/rsvps`, {
+      const response = await apiFetch(`/api/invitations/${invitation.slug}/rsvps`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

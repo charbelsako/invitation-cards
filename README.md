@@ -20,7 +20,7 @@ npm install
 npm run dev
 ```
 
-The frontend runs on `http://localhost:5173` and proxies `/api` requests to the API on `http://localhost:4000`.
+The frontend runs on `http://localhost:5173` and proxies `/api` requests to the API on `http://localhost:4000`. All frontend API calls go through `src/api/client.ts` using `VITE_API_URL`. Leave it empty in local dev to use the Vite proxy, or set it to `http://localhost:4000` to call the API directly.
 
 Open the admin builder at `http://localhost:5173/admin`. After creating an invitation, guests can open it at `http://localhost:5173/invite/<slug>` or `http://localhost:5173/?id=<slug>`.
 
@@ -31,6 +31,7 @@ Create a local `.env` file with:
 ```bash
 PORT=4000
 CLIENT_ORIGIN=http://localhost:5173
+VITE_API_URL=
 MONGODB_URI=mongodb://127.0.0.1:27017/invitation-cards
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=change-this-password

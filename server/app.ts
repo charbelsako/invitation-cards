@@ -15,8 +15,8 @@ export function createApp() {
 
   app.use('/api', healthRouter);
   app.use('/api', authRouter);
-  app.use('/api', adminRouter);
   app.use('/api', invitationsRouter);
+  app.use('/api', adminRouter);
   app.use(errorHandler);
 
   return app;
