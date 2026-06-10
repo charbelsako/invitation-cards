@@ -1,0 +1,26 @@
+Invitation card website
+
+this website will allow you to create Invitation
+cards designs
+
+i need your help planning it and figuring out what features to add
+
+it needs to be fully featured
+
+topics i'm thinking about
+horizontal scroll
+vertical scroll (multiple pages per Invitation)
+adding svg components which we or someone we know will make
+choosing colors
+a form to input name and how many people will attend (another form to indicate how many people are allowed +1)
+it needs to be connected to an email server possibly? to send emails on people that submitted the form
+music that will be played in the background when people view the Invitation
+
+think about what we could add that others don't have
+
+check these links for the features that i missed or something we could work upon
+https://aazima-wedding.web.app/?id=georges-joanne
+https://aazima-events.web.app/templates?utm_source=ig&utm_medium=social&utm_content=link_in_bio
+https://aazima-events.web.app/?id=template1
+https://aazima-invite.web.app/?id=elie-jennifer
+https://aazima-lb.web.app/elie-jennifer
