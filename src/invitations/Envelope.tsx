@@ -3,6 +3,7 @@ import {
   InviteMusicButton,
   InviteRsvpPanel,
   InviteTimeline,
+  EnvelopeInviteDetails,
   InvitationTemplateProps
 } from './shared';
 import { EnvelopeOpening } from './envelope/EnvelopeOpening';
@@ -14,7 +15,7 @@ export function Envelope(props: InvitationTemplateProps) {
     <>
       <InviteMusicButton {...props} />
       <EnvelopeOpening invitation={invitation} />
-      {/* <InviteDetails invitation={invitation} /> */}
+      <EnvelopeInviteDetails invitation={invitation} />
       {/* <InviteTimeline /> */}
       <InviteRsvpPanel {...props} />
     </>

@@ -75,6 +75,22 @@ export function InviteDetails({ compact = false, invitation }: { compact?: boole
   );
 }
 
+
+export function EnvelopeInviteDetails({ compact = false, invitation }: { compact?: boolean; invitation: Invitation }) {
+  return (
+    <section className={`invite-details ${compact ? 'invite-details--compact' : ''}`} id="details">
+      <span className="section-kicker">Details</span>
+      <h2>{invitation.introTitle}</h2>
+      <p>{invitation.introText}</p>
+      <ul className="wedding-details">
+        <EnvelopeInviteDetail icon={<CalendarDays />} title={invitation.dateLabel} text={`Ceremony starts at ${invitation.ceremonyTime}`} />
+        <EnvelopeInviteDetail icon={<MapPin />} title={invitation.venueName} text={invitation.location} />
+        <EnvelopeInviteDetail icon={<Users />} title="Private invitation" text={`Up to ${invitation.maxGuestsPerInvite} guest(s)`} />
+      </ul>
+    </section>
+  );
+}
+
 function InviteDetail({ icon, text, title }: { icon: ReactNode; text: string; title: string }) {
   return (
     <div>
@@ -84,6 +100,18 @@ function InviteDetail({ icon, text, title }: { icon: ReactNode; text: string; ti
     </div>
   );
 }
+
+
+function EnvelopeInviteDetail({ icon, text, title }: { icon: ReactNode; text: string; title: string }) {
+  return (
+    <li>
+      {icon}
+      <strong>{title}</strong>
+      <span>{text}</span>
+    </li>
+  );
+}
+
 
 export function InviteTimeline() {
   return (

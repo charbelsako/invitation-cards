@@ -1260,3 +1260,28 @@ footer {
 .text-black {
   color: black;
 }
+
+.wedding-details {
+  list-style: none;
+  padding: 0;
+}
+
+.wedding-details li {
+  position: relative;
+  padding-left: 42px;
+  margin: 18px 0;
+  color: #7b6a58;
+  font-size: 1.1rem;
+}
+
+.wedding-details li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none'%3E%3Ccircle cx='50' cy='50' r='45' stroke='%23B8945A' stroke-width='2'/%3E%3Cpath d='M50 32 C45 24 35 24 35 35 C35 45 50 56 50 56 C50 56 65 45 65 35 C65 24 55 24 50 32Z' fill='%23B8945A'/%3E%3Cpath d='M50 58 C48 64 44 69 38 73 M50 58 C52 64 56 69 62 73' stroke='%23B8945A' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")
+    center/contain no-repeat;
+}
