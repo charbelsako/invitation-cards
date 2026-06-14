@@ -57,7 +57,11 @@
   margin: 0.28rem auto 0;
   border: 1px solid color-mix(in srgb, var(--gold-dark) 72%, transparent);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--gold) 18%, white), var(--paper)),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--gold) 18%, white),
+      var(--paper)
+    ),
     var(--paper);
   box-shadow:
     0 0 0 5px color-mix(in srgb, var(--gold) 10%, transparent),
@@ -108,7 +112,11 @@
   padding: clamp(1.5rem, 5vw, 2.6rem);
   text-align: center;
   background:
-    radial-gradient(circle at top, color-mix(in srgb, var(--gold) 14%, transparent), transparent 18rem),
+    radial-gradient(
+      circle at top,
+      color-mix(in srgb, var(--gold) 14%, transparent),
+      transparent 18rem
+    ),
     rgba(255, 255, 255, 0.58);
   box-shadow: 0 24px 80px color-mix(in srgb, var(--gold-dark) 14%, transparent);
 }
@@ -119,7 +127,11 @@
   margin: -0.2rem auto 0.2rem;
   border: 1px solid color-mix(in srgb, var(--gold-dark) 72%, transparent);
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--gold) 18%, white), var(--paper)),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--gold) 18%, white),
+      var(--paper)
+    ),
     var(--paper);
   box-shadow: 0 0 0 5px color-mix(in srgb, var(--gold) 10%, transparent);
   content: '';
@@ -127,6 +139,8 @@
 }
 
 .envelope-timeline__venue span {
+  margin-left: auto;
+  margin-right: auto;
   color: var(--gold-dark);
   font-size: clamp(0.85rem, 2.4vw, 1rem);
   font-weight: 800;
@@ -135,6 +149,7 @@
 }
 
 .envelope-timeline__venue h3 {
+  text-align: center;
   margin: 0;
   color: color-mix(in srgb, var(--gold-dark) 76%, var(--ink));
   font-family: 'Cormorant Garamond', Georgia, serif;
@@ -145,6 +160,7 @@
 }
 
 .envelope-timeline__venue p {
+  text-align: center;
   width: min(460px, 100%);
   margin: 0 auto;
   color: color-mix(in srgb, var(--gold-dark) 56%, var(--muted));
@@ -163,7 +179,7 @@
   .envelope-timeline h2 {
     margin-bottom: 2.75rem;
     letter-spacing: 0.14em;
-    text-align: left;
+    text-align: center;
   }
 
   .envelope-timeline__list {
@@ -199,7 +215,8 @@
   }
 
   .envelope-timeline__venue::before {
-    margin-left: 0.25rem;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .envelope-timeline__venue p {

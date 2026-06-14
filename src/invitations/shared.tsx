@@ -151,7 +151,7 @@ export function InviteRsvpPanel({
         <h2>Will you join us?</h2>
         <label>
           Full name
-          <input name="guestName" required placeholder="Charbel Sarkis" />
+          <input name="guestName" required placeholder="Enter Name" />
         </label>
         <label>
           Email

@@ -61,7 +61,7 @@ export function EnvelopeOpening({ invitation }: EnvelopeOpeningProps) {
           </div>
         </div>
       </div>
-      <p className="envelope-opening__hint">{isOpen ? 'Tap the card again to close' : 'Tap the wax seal to open'}</p>
+      <p className="envelope-opening__hint">{isOpen ? 'Scroll Down' : 'Tap the wax seal to open'}</p>
     </section>
   );
 }
