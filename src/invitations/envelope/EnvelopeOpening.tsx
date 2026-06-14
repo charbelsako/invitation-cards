@@ -36,7 +36,6 @@ export function EnvelopeOpening({ invitation }: EnvelopeOpeningProps) {
             <span>Wedding</span>
             <h1>{invitation.coupleNames}</h1>
             <p>
-              Together with their families
               <br />
               invite you to celebrate
               <br />

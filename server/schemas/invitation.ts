@@ -22,6 +22,25 @@ const optionalMediaUrl = z.union([
   z.string().trim().refine(isStoredMediaUrl, 'Use a valid URL or upload a file from the admin studio.')
 ]);
 
+export const defaultTimelineItems = [
+  {
+    time: '6:30 PM',
+    title: 'Golden hour drinks begin',
+    detail: 'Arrive on time, the first surprise of the evening awaits at sunset!'
+  },
+  {
+    time: '8:00 PM',
+    title: 'The evening unfolds',
+    detail: 'Expect surprises all night long!'
+  }
+];
+
+const timelineItemInput = z.object({
+  time: z.string().trim().min(1),
+  title: z.string().trim().min(2),
+  detail: z.string().trim().min(2)
+});
+
 export const invitationInput = z.object({
   slug: z
     .string()
@@ -43,7 +62,8 @@ export const invitationInput = z.object({
   introText: z.string().trim().min(12),
   musicUrl: optionalMediaUrl.default(''),
   notifyEmail: z.union([z.literal(''), z.string().trim().email()]).default(''),
-  maxGuestsPerInvite: z.coerce.number().int().min(1).max(10).default(2)
+  maxGuestsPerInvite: z.coerce.number().int().min(1).max(10).default(2),
+  timelineItems: z.array(timelineItemInput).min(1).max(6).default(defaultTimelineItems)
 });
 
 export type InvitationInput = z.infer<typeof invitationInput>;

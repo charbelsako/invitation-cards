@@ -1,4 +1,4 @@
-import { InvitationInput } from '../schemas/invitation';
+import { defaultTimelineItems, InvitationInput } from '../schemas/invitation';
 
 const baseDemo = {
   coupleNames: 'Mira & Elias',
@@ -17,7 +17,8 @@ const baseDemo = {
     'This invitation combines premium visual design, subtle movement, RSVP collection, and a template-ready structure for future designs.',
   musicUrl: '',
   notifyEmail: '',
-  maxGuestsPerInvite: 2
+  maxGuestsPerInvite: 2,
+  timelineItems: defaultTimelineItems
 } satisfies Omit<InvitationInput, 'slug' | 'template'>;
 
 export const demoInvitations = [

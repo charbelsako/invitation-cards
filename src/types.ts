@@ -15,4 +15,11 @@ export type Invitation = {
   musicUrl?: string;
   notifyEmail: string;
   maxGuestsPerInvite: number;
+  timelineItems: TimelineItem[];
+};
+
+export type TimelineItem = {
+  time: string;
+  title: string;
+  detail: string;
 };

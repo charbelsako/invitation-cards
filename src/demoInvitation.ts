@@ -1,5 +1,18 @@
 import { Invitation } from './types';
 
+export const defaultTimelineItems = [
+  {
+    time: '6:30 PM',
+    title: 'Golden hour drinks begin',
+    detail: 'Arrive on time, the first surprise of the evening awaits at sunset!'
+  },
+  {
+    time: '8:00 PM',
+    title: 'The evening unfolds',
+    detail: 'Expect surprises all night long!'
+  }
+];
+
 export const fallbackInvitation: Invitation = {
   slug: 'demo-wedding',
   template: 'horizontal',
@@ -19,5 +32,6 @@ export const fallbackInvitation: Invitation = {
     'This invitation combines premium visual design, subtle movement, RSVP collection, and a template-ready structure for future designs.',
   musicUrl: '',
   notifyEmail: '',
-  maxGuestsPerInvite: 2
+  maxGuestsPerInvite: 2,
+  timelineItems: defaultTimelineItems
 };

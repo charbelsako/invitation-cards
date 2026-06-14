@@ -14,7 +14,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { apiFetch, mediaUrl } from './api/client';
-import { fallbackInvitation } from './demoInvitation';
+import { defaultTimelineItems, fallbackInvitation } from './demoInvitation';
 import { Invitation } from './types';
 
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
@@ -100,6 +100,42 @@ export function AdminApp() {
       ...current,
       [name]: name === 'maxGuestsPerInvite' ? Number(value) : value
     }));
+  }
+
+  function handleTimelineItemChange(index: number, field: 'time' | 'title' | 'detail', value: string) {
+    setForm((current) => ({
+      ...current,
+      timelineItems: current.timelineItems.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, [field]: value } : item
+      )
+    }));
+  }
+
+  function addTimelineItem() {
+    setForm((current) => ({
+      ...current,
+      timelineItems: [
+        ...current.timelineItems,
+        {
+          time: '',
+          title: '',
+          detail: ''
+        }
+      ]
+    }));
+  }
+
+  function removeTimelineItem(index: number) {
+    setForm((current) => {
+      if (current.timelineItems.length <= 1) {
+        return current;
+      }
+
+      return {
+        ...current,
+        timelineItems: current.timelineItems.filter((_item, itemIndex) => itemIndex !== index)
+      };
+    });
   }
 
   async function handleFileUpload(field: MediaFieldName, file: File) {
@@ -349,6 +385,52 @@ export function AdminApp() {
             <textarea name="introText" rows={4} value={form.introText} onChange={handleFieldChange} required />
           </label>
 
+          <SectionLabel icon={<Sparkles size={18} />} title="Timeline" />
+          <div className="timeline-builder">
+            {form.timelineItems.map((item, index) => (
+              <div className="timeline-builder__item" key={index}>
+                <div className="form-grid">
+                  <label>
+                    Time
+                    <input
+                      value={item.time}
+                      onChange={(event) => handleTimelineItemChange(index, 'time', event.target.value)}
+                      required
+                    />
+                  </label>
+                  <label>
+                    Title
+                    <input
+                      value={item.title}
+                      onChange={(event) => handleTimelineItemChange(index, 'title', event.target.value)}
+                      required
+                    />
+                  </label>
+                  <label className="form-grid__wide">
+                    Description
+                    <textarea
+                      rows={2}
+                      value={item.detail}
+                      onChange={(event) => handleTimelineItemChange(index, 'detail', event.target.value)}
+                      required
+                    />
+                  </label>
+                </div>
+                <button
+                  className="button button--ghost timeline-builder__remove"
+                  type="button"
+                  disabled={form.timelineItems.length <= 1}
+                  onClick={() => removeTimelineItem(index)}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button className="button button--ghost" type="button" onClick={addTimelineItem}>
+              Add timeline item
+            </button>
+          </div>
+
           <SectionLabel icon={<Mail size={18} />} title="RSVP Settings" />
           <div className="form-grid">
             <label>
@@ -480,6 +562,7 @@ function normalizeInvitation(invitation: Partial<Invitation>): Invitation {
     template: invitation.template || fallbackInvitation.template,
     musicUrl: invitation.musicUrl || '',
     notifyEmail: invitation.notifyEmail || '',
-    rsvpImage: invitation.rsvpImage || invitation.heroImage || fallbackInvitation.rsvpImage
+    rsvpImage: invitation.rsvpImage || invitation.heroImage || fallbackInvitation.rsvpImage,
+    timelineItems: invitation.timelineItems?.length ? invitation.timelineItems : defaultTimelineItems
   };
 }

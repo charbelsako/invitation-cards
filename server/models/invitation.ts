@@ -18,7 +18,17 @@ const invitationSchema = new Schema(
     introText: { type: String, required: true },
     musicUrl: { type: String, default: '' },
     notifyEmail: { type: String, default: '' },
-    maxGuestsPerInvite: { type: Number, default: 2, min: 1, max: 10 }
+    maxGuestsPerInvite: { type: Number, default: 2, min: 1, max: 10 },
+    timelineItems: {
+      type: [
+        {
+          time: { type: String, required: true },
+          title: { type: String, required: true },
+          detail: { type: String, required: true }
+        }
+      ],
+      default: []
+    }
   },
   { timestamps: true }
 );
