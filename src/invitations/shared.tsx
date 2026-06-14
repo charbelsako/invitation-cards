@@ -3,13 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   CalendarDays,
   CheckCircle2,
-  Home,
   Mail,
   MapPin,
-  Music2,
+  Pause,
+  Play,
+  VolumeX,
   Users
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { Invitation } from '../types';
 
 export type RsvpState = 'idle' | 'submitting' | 'success' | 'error';
@@ -33,28 +33,15 @@ export const timeline = [
 ];
 
 export function InviteMusicButton({
-  autoplayBlocked,
   invitation,
   isPlaying,
   onToggleMusic
 }: InvitationTemplateProps) {
-  const musicLabel = !invitation.musicUrl
-    ? 'No music'
-    : isPlaying
-      ? 'Pause'
-      : autoplayBlocked
-        ? 'Tap to play'
-        : 'Music';
-
   return (
     <div className="invite-floating-actions">
-      {/* <Link to="/" className="icon-button">
-        <Home size={18} />
-        Home
-      </Link> */}
       <button className="circle-icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
-        <Music2 size={18} />
-        {/* {musicLabel} */}
+        {!invitation.musicUrl && <VolumeX size={18} />}
+        {invitation.musicUrl && (isPlaying ? <Pause size={18} /> : <Play size={18} />)}
       </button>
     </div>
   );
