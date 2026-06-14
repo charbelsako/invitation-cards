@@ -52,9 +52,9 @@ export function InviteMusicButton({
         <Home size={18} />
         Home
       </Link> */}
-      <button className="icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
+      <button className="circle-icon-button" type="button" onClick={onToggleMusic} disabled={!invitation.musicUrl}>
         <Music2 size={18} />
-        {musicLabel}
+        {/* {musicLabel} */}
       </button>
     </div>
   );

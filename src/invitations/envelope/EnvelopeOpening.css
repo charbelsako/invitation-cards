@@ -6,8 +6,16 @@
   overflow: hidden;
   padding: clamp(2rem, 6vw, 5rem) 1rem;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.68), transparent 24rem),
-    radial-gradient(circle at bottom, color-mix(in srgb, var(--gold) 20%, transparent), transparent 28rem),
+    radial-gradient(
+      circle at top,
+      rgba(255, 255, 255, 0.68),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at bottom,
+      color-mix(in srgb, var(--gold) 20%, transparent),
+      transparent 28rem
+    ),
     linear-gradient(180deg, #f7f3ec, #e9e1d2);
   font-family: Georgia, serif;
 }
@@ -18,6 +26,7 @@
 }
 
 .envelope-opening__container {
+  overflow: visible;
   position: relative;
   width: 100%;
   aspect-ratio: 3 / 2;
@@ -31,11 +40,20 @@
   outline-offset: 1rem;
 }
 
+.z-index-high {
+  z-index: 19;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .envelope-opening__card {
   position: absolute;
-  top: 14%;
+  /* top: 14%; */
+  bottom: 35%;
   left: 7%;
-  z-index: 1;
+  /* z-index: 1; */
   display: flex;
   width: 86%;
   height: 82%;
@@ -173,7 +191,11 @@
   border-radius: 50%;
   color: #fff4d8;
   font-size: 20px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--gold-dark) 35%, #c14949), #8f1f1f);
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--gold-dark) 35%, #c14949),
+    #8f1f1f
+  );
   box-shadow:
     inset 0 2px 6px rgba(255, 255, 255, 0.3),
     0 5px 15px rgba(0, 0, 0, 0.2);

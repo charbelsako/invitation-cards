@@ -24,7 +24,7 @@ export function EnvelopeOpening({ invitation }: EnvelopeOpeningProps) {
     <section className="envelope-opening" aria-label="Wedding invitation envelope">
       <div className="envelope-opening__scene">
         <div
-          className={`envelope-opening__container ${isOpen ? 'envelope-opening__container--open' : ''}`}
+          className={`envelope-opening__container ${isOpen ? 'envelope-opening__container--open' : ''}  ${!isOpen ? 'overflow-hidden' : ''}`}
           role="button"
           tabIndex={0}
           aria-pressed={isOpen}
@@ -32,7 +32,7 @@ export function EnvelopeOpening({ invitation }: EnvelopeOpeningProps) {
           onClick={toggleEnvelope}
           onKeyDown={handleKeyDown}
         >
-          <div className="envelope-opening__card">
+          <div className={`envelope-opening__card ${isOpen ? 'z-index-high' : ''}`}>
             <span>Wedding</span>
             <h1>{invitation.coupleNames}</h1>
             <p>
@@ -43,13 +43,13 @@ export function EnvelopeOpening({ invitation }: EnvelopeOpeningProps) {
               their special day
             </p>
             <small>{invitation.dateLabel}</small>
-            <a
+            {/* <a
               href="#rsvp"
               className="button button--primary"
               onClick={(event) => event.stopPropagation()}
             >
               Respond
-            </a>
+            </a> */}
           </div>
 
           <div className="envelope-opening__envelope" aria-hidden="true">

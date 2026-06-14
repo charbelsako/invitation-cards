@@ -14,8 +14,8 @@ export function Envelope(props: InvitationTemplateProps) {
     <>
       <InviteMusicButton {...props} />
       <EnvelopeOpening invitation={invitation} />
-      <InviteDetails invitation={invitation} />
-      <InviteTimeline />
+      {/* <InviteDetails invitation={invitation} /> */}
+      {/* <InviteTimeline /> */}
       <InviteRsvpPanel {...props} />
     </>
   );
