@@ -12,6 +12,7 @@ export async function connectToDatabase() {
   }
 
   await mongoose.connect(process.env.MONGODB_URI);
+  await ensureInvitationIndexes();
   // await Promise.all(
   //   demoInvitations.map((demo) =>
   //     Invitation.updateOne({ slug: demo.slug }, { $setOnInsert: demo }, { upsert: true })
@@ -20,6 +21,24 @@ export async function connectToDatabase() {
   // await seedAdminUser();
 
   console.log('Connected to MongoDB.');
+}
+
+async function ensureInvitationIndexes() {
+  const indexes = await Invitation.collection.indexes();
+  const legacySlugIndex = indexes.find((index) => index.name === 'slug_1');
+
+  if (legacySlugIndex) {
+    await Invitation.collection.dropIndex('slug_1');
+  }
+
+  await Invitation.collection.createIndex(
+    { slug: 1 },
+    {
+      unique: true,
+      partialFilterExpression: { deletedAt: null },
+      name: 'unique_active_invitation_slug'
+    }
+  );
 }
 
 export function getDatabaseStatus() {

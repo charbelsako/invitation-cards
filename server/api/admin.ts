@@ -16,7 +16,7 @@ adminRouter.get('/admin/me', (request, response) => {
 
 adminRouter.get('/admin/invitations', async (_request, response, next) => {
   try {
-    const invitations = await Invitation.find().sort({ updatedAt: -1 }).lean();
+    const invitations = await Invitation.find({ deletedAt: null }).sort({ updatedAt: -1 }).lean();
     response.json(invitations);
   } catch (error) {
     next(error);
@@ -27,8 +27,8 @@ adminRouter.post('/admin/invitations', async (request, response, next) => {
   try {
     const parsed = invitationInput.parse(request.body);
     const invitation = await Invitation.findOneAndUpdate(
-      { slug: parsed.slug },
-      { $set: parsed },
+      { slug: parsed.slug, deletedAt: null },
+      { $set: { ...parsed, deletedAt: null, isDeleted: false } },
       { new: true, upsert: true, runValidators: true }
     ).lean();
 
@@ -43,8 +43,8 @@ adminRouter.put('/admin/invitations/:slug', async (request, response, next) => {
     const slug = String(request.params.slug);
     const parsed = invitationInput.parse({ ...request.body, slug });
     const invitation = await Invitation.findOneAndUpdate(
-      { slug },
-      { $set: parsed },
+      { slug, deletedAt: null },
+      { $set: { ...parsed, deletedAt: null, isDeleted: false } },
       { new: true, runValidators: true }
     ).lean();
 
@@ -54,6 +54,26 @@ adminRouter.put('/admin/invitations/:slug', async (request, response, next) => {
     }
 
     response.json(invitation);
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.delete('/admin/invitations/:slug', async (request, response, next) => {
+  try {
+    const slug = String(request.params.slug);
+    const invitation = await Invitation.findOneAndUpdate(
+      { slug, deletedAt: null },
+      { $set: { deletedAt: new Date(), isDeleted: true } },
+      { new: true, runValidators: true }
+    ).lean();
+
+    if (!invitation) {
+      response.status(404).json({ message: 'Invitation not found.' });
+      return;
+    }
+
+    response.json({ message: 'Invitation deleted.' });
   } catch (error) {
     next(error);
   }
@@ -80,7 +100,16 @@ adminRouter.post('/admin/uploads', (request, response, next) => {
 adminRouter.get('/admin/invitations/:slug/rsvps', async (request, response, next) => {
   try {
     const slug = String(request.params.slug);
-    const rsvps = await Rsvp.find({ invitationSlug: slug }).sort({ createdAt: -1 }).lean();
+    const invitation = await Invitation.findOne({ slug, deletedAt: null }).lean();
+
+    if (!invitation) {
+      response.status(404).json({ message: 'Invitation not found.' });
+      return;
+    }
+
+    const rsvps = await Rsvp.find({
+      $or: [{ invitationId: invitation._id }, { invitationSlug: slug, invitationId: { $exists: false } }]
+    }).sort({ createdAt: -1 }).lean();
     response.json(rsvps);
   } catch (error) {
     next(error);

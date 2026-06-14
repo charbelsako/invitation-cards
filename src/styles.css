@@ -1091,6 +1091,33 @@ footer {
   cursor: pointer;
 }
 
+.template-option-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.45rem;
+  align-items: stretch;
+}
+
+.template-option-row .template-option {
+  width: 100%;
+}
+
+.template-option-delete {
+  display: grid;
+  width: 2.8rem;
+  place-items: center;
+  border: 1px solid rgba(141, 46, 35, 0.18);
+  border-radius: 18px;
+  color: #8d2e23;
+  background: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+}
+
+.template-option-delete:hover {
+  border-color: rgba(141, 46, 35, 0.38);
+  background: rgba(141, 46, 35, 0.08);
+}
+
 .template-option--new,
 .template-option--active {
   border-color: rgba(185, 130, 91, 0.42);

@@ -2,6 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const rsvpSchema = new Schema(
   {
+    invitationId: { type: Schema.Types.ObjectId, ref: 'Invitation', index: true },
     invitationSlug: { type: String, required: true, index: true },
     guestName: { type: String, required: true },
     email: { type: String, required: true },

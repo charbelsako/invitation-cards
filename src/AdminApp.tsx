@@ -11,7 +11,8 @@ import {
   Palette,
   Plus,
   Save,
-  Sparkles
+  Sparkles,
+  Trash2
 } from 'lucide-react';
 import { apiFetch, mediaUrl } from './api/client';
 import { fallbackInvitation } from './demoInvitation';
@@ -22,11 +23,7 @@ type MediaFieldName = 'heroImage' | 'rsvpImage' | 'musicUrl';
 type UploadState = Partial<Record<MediaFieldName, boolean>>;
 
 const templates = [
-  {
-    id: 'horizontal',
-    name: 'Modern Horizontal',
-    description: 'Warm neutrals, soft blur, and timeless editorial spacing.'
-  },
+
   {
     id: 'vertical',
     name: 'Modern Vertical',
@@ -200,6 +197,37 @@ export function AdminApp() {
     }
   }
 
+  async function handleDeleteInvitation(slug: string) {
+    const shouldDelete = window.confirm(`Delete /invite/${slug}? You can create a new invitation with this slug later.`);
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    setSaveState('saving');
+    setSaveMessage('');
+
+    try {
+      const response = await apiFetch(`/api/admin/invitations/${encodeURIComponent(slug)}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const payload = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(payload?.message || 'Could not delete invitation.');
+      }
+
+      setInvitations((current) => current.filter((invitation) => invitation.slug !== slug));
+      setForm((current) => (current.slug === slug ? fallbackInvitation : current));
+      setSaveState('success');
+      setSaveMessage('Invitation deleted. The slug is available for a new invitation.');
+    } catch (error) {
+      setSaveState('error');
+      setSaveMessage(error instanceof Error ? error.message : 'Could not delete invitation.');
+    }
+  }
+
   function handleLogout() {
     localStorage.removeItem('invitation-admin-token');
     setToken('');
@@ -273,15 +301,24 @@ export function AdminApp() {
             New invitation
           </button>
           {invitations.map((invitation) => (
-            <button
-              className={`template-option ${invitation.slug === form.slug ? 'template-option--active' : ''}`}
-              key={invitation.slug}
-              type="button"
-              onClick={() => setForm(normalizeInvitation(invitation))}
-            >
-              <strong>{invitation.coupleNames}</strong>
-              <span>/invite/{invitation.slug}</span>
-            </button>
+            <div className="template-option-row" key={invitation.slug}>
+              <button
+                className={`template-option ${invitation.slug === form.slug ? 'template-option--active' : ''}`}
+                type="button"
+                onClick={() => setForm(normalizeInvitation(invitation))}
+              >
+                <strong>{invitation.coupleNames}</strong>
+                <span>/invite/{invitation.slug}</span>
+              </button>
+              <button
+                className="template-option-delete"
+                type="button"
+                aria-label={`Delete ${invitation.coupleNames}`}
+                onClick={() => void handleDeleteInvitation(invitation.slug)}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
           ))}
         </aside>
 

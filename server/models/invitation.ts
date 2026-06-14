@@ -3,7 +3,7 @@ import { templateOptions } from '../constants/templates';
 
 const invitationSchema = new Schema(
   {
-    slug: { type: String, required: true, unique: true, index: true },
+    slug: { type: String, required: true },
     template: { type: String, enum: templateOptions, default: 'horizontal' },
     coupleNames: { type: String, required: true },
     dateLabel: { type: String, required: true },
@@ -28,9 +28,20 @@ const invitationSchema = new Schema(
         }
       ],
       default: []
-    }
+    },
+    deletedAt: { type: Date, default: null },
+    isDeleted: { type: Boolean, default: false }
   },
   { timestamps: true }
+);
+
+invitationSchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { deletedAt: null },
+    name: 'unique_active_invitation_slug'
+  }
 );
 
 export const Invitation =

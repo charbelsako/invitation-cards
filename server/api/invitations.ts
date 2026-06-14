@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { demoInvitation } from '../data/demoInvitation';
 import { requireDatabase } from '../middleware/requireDatabase';
 import { Invitation } from '../models/invitation';
 import { Rsvp } from '../models/rsvp';
@@ -17,7 +16,7 @@ invitationsRouter.get('/invitations/:slug', async (request, response, next) => {
     }
 
     const slug = String(request.params.slug);
-    const invitation = await Invitation.findOne({ slug }).lean();
+    const invitation = await Invitation.findOne({ slug, deletedAt: null }).lean();
 
     if (!invitation) {
       response.status(404).json({ message: 'Invitation not found.' });
@@ -33,8 +32,14 @@ invitationsRouter.get('/invitations/:slug', async (request, response, next) => {
 invitationsRouter.post('/invitations/:slug/rsvps', requireDatabase, async (request, response, next) => {
   try {
     const slug = String(request.params.slug);
-    const invitation = await Invitation.findOne({ slug }).lean();
-    const maxGuests = invitation?.maxGuestsPerInvite || demoInvitation.maxGuestsPerInvite;
+    const invitation = await Invitation.findOne({ slug, deletedAt: null }).lean();
+
+    if (!invitation) {
+      response.status(404).json({ message: 'Invitation not found.' });
+      return;
+    }
+
+    const maxGuests = invitation.maxGuestsPerInvite;
     const parsed = rsvpInput.parse(request.body);
 
     if (parsed.attendingCount > maxGuests) {
@@ -43,11 +48,12 @@ invitationsRouter.post('/invitations/:slug/rsvps', requireDatabase, async (reque
     }
 
     const rsvp = await Rsvp.create({
+      invitationId: invitation._id,
       invitationSlug: slug,
       ...parsed
     });
 
-    await sendRsvpNotification(parsed, slug, invitation?.notifyEmail);
+    await sendRsvpNotification(parsed, slug, invitation.notifyEmail);
 
     response.status(201).json({ id: rsvp.id, message: 'RSVP saved.' });
   } catch (error) {
