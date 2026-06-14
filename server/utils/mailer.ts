@@ -30,6 +30,7 @@ export async function sendRsvpNotification(
     text: [
       `Guest: ${input.guestName}`,
       `Email: ${input.email}`,
+      `Response: ${input.attendanceStatus === 'attending' ? 'Will attend' : 'Will not attend'}`,
       `Attending: ${input.attendingCount}`,
       `Note: ${input.note || 'None'}`
     ].join('\n')

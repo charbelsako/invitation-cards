@@ -97,6 +97,63 @@
   line-height: 1.35;
 }
 
+.envelope-timeline__venue {
+  position: relative;
+  display: grid;
+  width: min(680px, 100%);
+  gap: 0.8rem;
+  margin: clamp(3rem, 7vw, 5rem) auto 0;
+  border: 1px solid color-mix(in srgb, var(--gold) 26%, transparent);
+  border-radius: 34px;
+  padding: clamp(1.5rem, 5vw, 2.6rem);
+  text-align: center;
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--gold) 14%, transparent), transparent 18rem),
+    rgba(255, 255, 255, 0.58);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--gold-dark) 14%, transparent);
+}
+
+.envelope-timeline__venue::before {
+  width: 1rem;
+  height: 1rem;
+  margin: -0.2rem auto 0.2rem;
+  border: 1px solid color-mix(in srgb, var(--gold-dark) 72%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gold) 18%, white), var(--paper)),
+    var(--paper);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--gold) 10%, transparent);
+  content: '';
+  transform: rotate(45deg);
+}
+
+.envelope-timeline__venue span {
+  color: var(--gold-dark);
+  font-size: clamp(0.85rem, 2.4vw, 1rem);
+  font-weight: 800;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.envelope-timeline__venue h3 {
+  margin: 0;
+  color: color-mix(in srgb, var(--gold-dark) 76%, var(--ink));
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.2rem, 7vw, 4.4rem);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.envelope-timeline__venue p {
+  width: min(460px, 100%);
+  margin: 0 auto;
+  color: color-mix(in srgb, var(--gold-dark) 56%, var(--muted));
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+  font-style: italic;
+  line-height: 1.35;
+}
+
 @media (max-width: 640px) {
   .envelope-timeline {
     width: min(100%, calc(100% - 1.5rem));
@@ -133,5 +190,19 @@
 
   .envelope-timeline__content time {
     letter-spacing: 0.22em;
+  }
+
+  .envelope-timeline__venue {
+    margin-top: 2.75rem;
+    border-radius: 28px;
+    text-align: left;
+  }
+
+  .envelope-timeline__venue::before {
+    margin-left: 0.25rem;
+  }
+
+  .envelope-timeline__venue p {
+    margin: 0;
   }
 }

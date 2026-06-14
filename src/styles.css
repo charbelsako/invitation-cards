@@ -562,6 +562,64 @@ footer svg {
   box-shadow: 0 0 0 4px rgba(185, 130, 91, 0.14);
 }
 
+.attendance-toggle {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.attendance-toggle legend {
+  grid-column: 1 / -1;
+  margin-bottom: 0.25rem;
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.attendance-toggle label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.attendance-toggle input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.attendance-toggle span {
+  display: grid;
+  min-height: 3.15rem;
+  place-items: center;
+  border: 1px solid rgba(126, 78, 48, 0.18);
+  border-radius: 18px;
+  padding: 0.85rem 1rem;
+  color: var(--ink);
+  font-weight: 900;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.78);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease,
+    background 180ms ease;
+}
+
+.attendance-toggle input:focus-visible + span {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(185, 130, 91, 0.14);
+}
+
+.attendance-toggle input:checked + span {
+  border-color: var(--gold);
+  color: white;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--gold-dark) 18%, transparent);
+}
+
 .form-message {
   display: flex;
   align-items: center;

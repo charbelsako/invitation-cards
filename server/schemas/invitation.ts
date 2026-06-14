@@ -63,7 +63,7 @@ export const invitationInput = z.object({
   musicUrl: optionalMediaUrl.default(''),
   notifyEmail: z.union([z.literal(''), z.string().trim().email()]).default(''),
   maxGuestsPerInvite: z.coerce.number().int().min(1).max(10).default(2),
-  timelineItems: z.array(timelineItemInput).min(1).max(6).default(defaultTimelineItems)
+  timelineItems: z.array(timelineItemInput).max(6).default([])
 });
 
 export type InvitationInput = z.infer<typeof invitationInput>;

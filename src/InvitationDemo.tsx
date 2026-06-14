@@ -134,13 +134,17 @@ export function InvitationDemo() {
     setMessage('');
 
     try {
+      const attendanceStatus = formData.get('attendanceStatus') === 'not-attending' ? 'not-attending' : 'attending';
+      const attendingCount = attendanceStatus === 'attending' ? Number(formData.get('attendingCount')) : 0;
+
       const response = await apiFetch(`/api/invitations/${invitation.slug}/rsvps`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           guestName: formData.get('guestName'),
           email: formData.get('email'),
-          attendingCount: Number(formData.get('attendingCount')),
+          attendanceStatus,
+          attendingCount,
           note: formData.get('note')
         })
       });

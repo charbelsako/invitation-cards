@@ -14,7 +14,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { apiFetch, mediaUrl } from './api/client';
-import { defaultTimelineItems, fallbackInvitation } from './demoInvitation';
+import { fallbackInvitation } from './demoInvitation';
 import { Invitation } from './types';
 
 type SaveState = 'idle' | 'saving' | 'success' | 'error';
@@ -563,6 +563,6 @@ function normalizeInvitation(invitation: Partial<Invitation>): Invitation {
     musicUrl: invitation.musicUrl || '',
     notifyEmail: invitation.notifyEmail || '',
     rsvpImage: invitation.rsvpImage || invitation.heroImage || fallbackInvitation.rsvpImage,
-    timelineItems: invitation.timelineItems?.length ? invitation.timelineItems : defaultTimelineItems
+    timelineItems: invitation.timelineItems || []
   };
 }

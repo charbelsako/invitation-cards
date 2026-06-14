@@ -157,6 +157,17 @@ export function InviteRsvpPanel({
           Email
           <input name="email" type="email" required placeholder="guest@example.com" />
         </label>
+        <fieldset className="attendance-toggle">
+          <legend>Attendance</legend>
+          <label>
+            <input name="attendanceStatus" type="radio" value="attending" defaultChecked />
+            <span>I will attend</span>
+          </label>
+          <label>
+            <input name="attendanceStatus" type="radio" value="not-attending" />
+            <span>I will not attend</span>
+          </label>
+        </fieldset>
         <label>
           Guests attending
           <select name="attendingCount" required defaultValue="1">
