@@ -1118,7 +1118,6 @@ footer {
   background: rgba(141, 46, 35, 0.08);
 }
 
-.template-option--new,
 .template-option--active {
   border-color: rgba(185, 130, 91, 0.42);
   background: rgba(185, 130, 91, 0.12);

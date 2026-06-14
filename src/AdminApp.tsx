@@ -306,7 +306,7 @@ export function AdminApp() {
       <section className="studio-grid">
         <aside className="admin-sidebar">
           <button
-            className="template-option template-option--new"
+            className={`template-option template-option--new ${editingSlug === null ? 'template-option--active' : ''}`}
             type="button"
             onClick={() => {
               setForm(fallbackInvitation);
