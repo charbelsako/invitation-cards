@@ -40,6 +40,7 @@ export function AdminApp() {
   const [token, setToken] = useState(() => localStorage.getItem('invitation-admin-token') || '');
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [form, setForm] = useState<Invitation>(fallbackInvitation);
+  const [editingSlug, setEditingSlug] = useState<string | null>(null);
   const [loginMessage, setLoginMessage] = useState('');
   const [saveState, setSaveState] = useState<SaveState>('idle');
   const [saveMessage, setSaveMessage] = useState('');
@@ -55,7 +56,9 @@ export function AdminApp() {
       .then((items) => {
         setInvitations(items);
         if (items[0]) {
-          setForm(normalizeInvitation(items[0]));
+          const invitation = normalizeInvitation(items[0]);
+          setForm(invitation);
+          setEditingSlug(invitation.slug);
         }
       })
       .catch((error) => {
@@ -172,8 +175,9 @@ export function AdminApp() {
     setSaveMessage('');
 
     try {
-      const response = await apiFetch('/api/admin/invitations', {
-        method: 'POST',
+      const savePath = editingSlug ? `/api/admin/invitations/${encodeURIComponent(editingSlug)}` : '/api/admin/invitations';
+      const response = await apiFetch(savePath, {
+        method: editingSlug ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
@@ -188,7 +192,11 @@ export function AdminApp() {
 
       const saved = normalizeInvitation(payload);
       setForm(saved);
-      setInvitations((current) => [saved, ...current.filter((item) => item.slug !== saved.slug)]);
+      setEditingSlug(saved.slug);
+      setInvitations((current) => [
+        saved,
+        ...current.filter((item) => item.slug !== saved.slug && item.slug !== editingSlug)
+      ]);
       setSaveState('success');
       setSaveMessage('Invitation saved. Your guest link is ready.');
     } catch (error) {
@@ -220,6 +228,7 @@ export function AdminApp() {
 
       setInvitations((current) => current.filter((invitation) => invitation.slug !== slug));
       setForm((current) => (current.slug === slug ? fallbackInvitation : current));
+      setEditingSlug((current) => (current === slug ? null : current));
       setSaveState('success');
       setSaveMessage('Invitation deleted. The slug is available for a new invitation.');
     } catch (error) {
@@ -296,16 +305,27 @@ export function AdminApp() {
 
       <section className="studio-grid">
         <aside className="admin-sidebar">
-          <button className="template-option template-option--new" type="button" onClick={() => setForm(fallbackInvitation)}>
+          <button
+            className="template-option template-option--new"
+            type="button"
+            onClick={() => {
+              setForm(fallbackInvitation);
+              setEditingSlug(null);
+            }}
+          >
             <Plus size={18} />
             New invitation
           </button>
           {invitations.map((invitation) => (
             <div className="template-option-row" key={invitation.slug}>
               <button
-                className={`template-option ${invitation.slug === form.slug ? 'template-option--active' : ''}`}
+                className={`template-option ${invitation.slug === editingSlug ? 'template-option--active' : ''}`}
                 type="button"
-                onClick={() => setForm(normalizeInvitation(invitation))}
+                onClick={() => {
+                  const selected = normalizeInvitation(invitation);
+                  setForm(selected);
+                  setEditingSlug(selected.slug);
+                }}
               >
                 <strong>{invitation.coupleNames}</strong>
                 <span>/invite/{invitation.slug}</span>

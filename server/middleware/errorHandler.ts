@@ -19,6 +19,20 @@ export function errorHandler(error: unknown, _request: Request, response: Respon
     return;
   }
 
+  if (isMongoDuplicateKeyError(error)) {
+    response.status(409).json({ message: 'An active invitation already uses this slug.' });
+    return;
+  }
+
   console.error(error);
   response.status(500).json({ message: 'Unexpected server error.' });
+}
+
+function isMongoDuplicateKeyError(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    error.code === 11000
+  );
 }

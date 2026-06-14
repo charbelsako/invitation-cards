@@ -41,7 +41,7 @@ adminRouter.post('/admin/invitations', async (request, response, next) => {
 adminRouter.put('/admin/invitations/:slug', async (request, response, next) => {
   try {
     const slug = String(request.params.slug);
-    const parsed = invitationInput.parse({ ...request.body, slug });
+    const parsed = invitationInput.parse(request.body);
     const invitation = await Invitation.findOneAndUpdate(
       { slug, deletedAt: null },
       { $set: { ...parsed, deletedAt: null, isDeleted: false } },
